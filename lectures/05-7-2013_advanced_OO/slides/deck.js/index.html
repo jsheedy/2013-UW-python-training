@@ -107,6 +107,11 @@ function = shiny_decorator(function)
 </section>
 
 <section class="slide">
+    <h2>He meant closures</h2>
+    <img src="../images/closures.jpg" />
+</section>
+
+<section class="slide">
 	<h2>@decorator arguments</h2>
     <p>decorators can take arguments, with a little care</p>
 <pre>
@@ -271,6 +276,15 @@ class ExampleDataLayer():
 <section class="slide">
     <h2>Multiple Inheritance and the Diamond Problem</h2>
     <p>The order of inheritance affects the behavior of the class, so understanding method resolution order (MRO) is important</p>
+    <p>When calling a method on an object, Python first checks to see if the method name is defined in the class.  If not, it climbs up the class hierarchy until it either finds it or reaches the top without locating it, which will result in an AttributeError exception being thrown.</p>
+    <p>You can explicitly call the method as defined in a parent using super().</p>
+<pre>
+<code>
+class D(B, C):
+    def meth(self, arg):
+        super(D, self).meth(arg)
+</code>
+</pre>
     <img src="../images/Diamond_inheritance.png" />
 
 </section>
@@ -287,6 +301,31 @@ class ExampleDataLayer():
     </p>
 </section>
 
+<section class="slide">
+    <h2>Initialization</h2>
+    <p>An object is initialized after creation by the __init__ method.  It can accept arguments, which are passed to the class.</p>
+<pre>
+<code>
+from StringIO import StringIO
+class MyStringIO(StringIO):
+    def __init__(self, s):
+        super(MyStringIO, self).__init__(s)
+        self.write(s)
+</code>
+</pre>
+</section>
+
+<section class="slide">
+    <h2>Magic Methods</h2>
+    <p>They all start with and end with '__', and do things like support operators and comparisons, and provide handlers for the object lifecycle. </p>
+    <ul>
+        <li>__cmp__(self, other)
+        <li>__eq__(self, other)
+        <li>__add__(self, other)
+    </ul>
+    <p>Also, __call__, __str__, __repr__, __sizeof__, __setattr__, __getattr__, __len__, __iter__, __contains__, __lshift__, __rshift__, __xor__, __div__, __enter__, __exit__, and my personal favorite __rxor__(self,other)...... </p>
+    <p>The list is really long, it's mostly important to get a flavor of how they are used in Python so you can find and implement the right one when you need it.  See <a href="http://www.rafekettler.com/magicmethods.html">http://www.rafekettler.com/magicmethods.html</a> for more</p>
+</section>
 
 <section class="slide">
     <h2>@classmethods</h2>
@@ -324,20 +363,20 @@ c.hello_instance()
 class BankAccount(object):
     def __init__(self, account_number):
         # note that the actual field value is "hidden"
-        self.__balance = 0.0
+        self._balance = 0.0
         self.account_number = account_number
 
     @property
     def balance(self):
         """getter"""
-        return self.__balance
+        return self._balance
 
     @balance.setter
     def balance(self, value):
         # record this transaction
         print "set the value of account %(account_number)s to %(value)f" % \
             {'account_number': self.account_number, 'value': value}
-        self.__balance = value
+        self._balance = value
         
 </code>
 </pre>
@@ -352,14 +391,17 @@ class BankAccount(object):
 -->
 
 <section class="slide">
-    <h2>Lab work</h2>
+    <h2>Lab work, enhance the BankAccount class</h2>
     <p>
-        Take BankAccount class, add a deposit method.  
-        Add a withdraw method.  
-        Add a transfer method.  
-        Add constraint to keep balance greater than or equal to 0.
-        Debug transfer method using pdb.
-        Implement 
+        <ol>
+            <li>Add constraint to keep balance greater than or equal to 0.
+            <li>Add a deposit method.  
+            <li>Add a withdraw method.  
+            <li>Add a transfer method.  
+            <li>Debug transfer method using pdb.
+            <li>Add the magic methods __str__, __eq__, and __add__.  Extra credit for __rxor__.
+            <li>Create a new subclass, CheckingAccount.   Add a new method write_check() which uses methods defined in the parent class.
+        </ol>
     </p>
 </section>
 
