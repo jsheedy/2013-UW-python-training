@@ -51,7 +51,7 @@
     <ul>
         <li>Review of @decorators</li>
         <li>Review of debugging</li>
-
+        <li>Python class styles</li>
         <li>Inheritance</li>
         <li>Multiple inheritance and the Diamond Problem
         <li>__init__ and super()
@@ -146,7 +146,6 @@ def my_function2():
 </code></pre>
 </section>
 
-
 <section class="slide">
 	<h2>Debugging Python</h2>
     <h3>To IDE or not to IDE</h3>
@@ -214,14 +213,13 @@ ipdb> continue
     <h2>Object Oriented programming in Python</h2>
     <p>Object Oriented Programming (OOP) is a programming paradigm which encapsulates data and functions together in the form of objects</p> 
     <ul>
-        <li>old and new style classes</li>
+        <li>Old and new style classes</li>
         <li>Interfaces</li>
         <li>Multiple inheritance</li>
         <li>@classmethods</li>
         <li>object</li>
         <li>super()</li>
         <li>__init__</li>
-
 
     </ul>
 </section>
@@ -271,6 +269,14 @@ class ExampleDataLayer():
     </code>
     </pre>
 
+</section>
+
+<section class="slide">
+    <h2>Mixins</h2>
+    <ul>
+    <li>A common alternative to defining abstract interfaces is concrete mixin classes</li>
+    <li>Methods you want to pull in are already defined.  But in a complex hierarchy, be careful what you get </li>
+    </ul>
 </section>
 
 <section class="slide">
@@ -401,6 +407,7 @@ class BankAccount(object):
             <li>Debug transfer method using pdb.
             <li>Add the magic methods __str__, __eq__, and __add__.  Extra credit for __rxor__.
             <li>Create a new subclass, CheckingAccount.   Add a new method write_check() which uses methods defined in the parent class.
+            <li>Import the decorators we played with and integrate them into your new class
         </ol>
     </p>
 </section>
