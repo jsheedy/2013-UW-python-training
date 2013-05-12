@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 """
-simple test code for cy_add
+simple test code for cy_add_2
 
 can be run by itself, or with nose or pytest
 """
 
-import cy_add
+import cy_add_2 as cy_add
 
 
 def test_1():

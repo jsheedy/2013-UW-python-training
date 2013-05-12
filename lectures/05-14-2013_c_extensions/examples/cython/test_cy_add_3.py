@@ -2,11 +2,9 @@
 
 """
 simple test code for cy_add
-
-can be run by itself, or with nose or pytest
 """
 
-import cy_add
+import cy_add_3 as cy_add
 
 
 def test_1():
