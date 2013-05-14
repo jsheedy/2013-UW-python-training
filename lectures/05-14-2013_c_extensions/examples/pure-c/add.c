@@ -4,8 +4,7 @@ int add(int x, int y) {
     return x+y;
 }
 int main(void) {
-    int w = 0;
+    int w = 3;
     int q = 2;
-    printf("test\n");
-    printf("%d", add(w,q));
+    printf("%d + %d = %d\n\n", w, q, add(w,q));
 }

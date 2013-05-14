@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=1024, user-scalable=no">
 
-	<title>Isilon Advanced Python Week 6 : Advanced OO</title>
+	<title>Isilon Advanced Python Week 7 : C extensions</title>
 	
 	<!-- Required stylesheet -->
 	<link rel="stylesheet" href="core/deck.core.css">
@@ -51,8 +51,10 @@
 	<h3>Today's topics</h3>
     <ul>
         <li>Motivation and options</li>
-        <li>extension modules</li>
-        <li>swig</li>
+        <li>extending versus embedding
+        <li>extension modules (C API)</li>
+        <li>SWIG</li>
+        <li>SIP</li>
         <li>ctypes</li>
         <li>cython</li>
         <li>shedskin (https://code.google.com/p/shedskin/)</li>
@@ -66,6 +68,196 @@
     <ul>
         <li>Performance
         <li>Integration with existing C libraries
+        <li>Implement new builtin types
+    </ul>
+
+    <h3>Further reading</h3>
+    <ul>
+    <li><a target="_blank" href="http://docs.python.org/2/extending/extending.html">http://docs.python.org/2/extending/extending.html</a>
+    </ul>
+</section>
+
+<section class="slide">
+	<h2>Packaging your code</h2>
+    <p>Before we start building extensions, a quick look at building and packaging Python modules
+    <p>We'll package our add() function into a distributable model
+<pre><code>
+def add(x, y):
+    return x+y
+</code></pre>
+</section>
+
+<section class="slide">
+	<h2>Packaging with Distutils</h2>
+    <ul>
+        <li>write a setup.py script, e.g.
+<pre><code>
+from distutils.core import setup, Extension
+
+setup(
+    name='add',
+    version='1.0',
+    description='Test description',
+    ext_modules=[],
+    py_modules=['add'],
+)
+
+</code></pre>
+</li>
+<li><code>% python setup.py build</code>
+<li><code>% python setup.py sdist</code>
+</ul>
+    <p>Now your package is nicely wrapped up in build/, ready to distribute</p>
+    <p>Distutils isn't the only package for packaging, there is also setuptools and distribute</p>
+    <p>Further reading</p>
+    <ul>
+        <li><a target="_blank" href="http://docs.python.org/2/distutils/introduction.html">http://docs.python.org/2/distutils/introduction.html</a>
+        <li><a target="_blank" href="http://peak.telecommunity.com/DevCenter/setuptools">http://peak.telecommunity.com/DevCenter/setuptools</a>
+        <li><a target="_blank" href="https://pypi.python.org/pypi/distribute">https://pypi.python.org/pypi/distribute</a>
+    </ul>
+</section>
+
+<section class="slide">
+	<h2>Virtualenv</h2>
+    <p>Creates isolated Python environments, with just the packages and versions you want, independent of system-wide installation
+    <p>To create a new environment and start using it:
+<pre><code>
+% virtualenv /path/to/your/environment
+% . /path/to/your/environment/bin/activate
+</code></pre>
+
+    <p>Further reading</p>
+    <ul>
+        <li><a target="_blank" href="https://pypi.python.org/pypi/virtualenv">https://pypi.python.org/pypi/virtualenv</a>
+    </ul>
+</section>
+
+<section class="slide">
+    <h2>Example code used today</h2>
+    <p>To keep focus on the integration tools, we're going to focus on integrating the following the add() function into our Python application</p>
+<pre><code>
+#include &lt;stdio.h&gt;
+
+int add(int x, int y) {
+    return x+y;
+}
+
+int main(void) {
+    int w = 0;
+    int q = 2;
+    printf("test\n");
+    printf("%d", add(w,q));
+}
+</code></pre>
+
+</section>
+
+<section class="slide">
+    <h2>The pure C code</h2>
+    <ul>
+        <li>Create a Makefile:
+        <li><code>all: add; gcc -o add add.c</code>
+        <li><code>% make</code>
+        <li><code>./add</code>
+        <li><pre> 3 + 2 = 5</pre>
+    </ul>
+</section>
+
+
+<section class="slide">
+	<h2>The C API</h2>
+    <p>Write your function in pure C using the Python API and import it into Python</p>
+    <ul>
+        <li>Good for integrating with C library functions and system calls
+        <li>The API isn't trivial to learn
+        <li>Lots of opporunity for error, manual reference counting
+    </ul>
+    <p>Further reading</p>
+    <ul>
+        <li><a target="_blank" href="http://docs.python.org/2/extending/extending.html">http://docs.python.org/2/extending/extending.html</a>
+        <li><a target="_blank" href="http://hg.python.org/cpython/file/2145593d108d">Python 2.7 source code</a>
+    </ul>
+</section>
+
+<section class="slide">
+	<h2>SWIG</h2>
+    <h3>Simple Wrapper Interface and Generator</h3>
+    <p>A language agnostic tool for integrating C/C++ code with high level languages</p>
+    <p>Advantages
+    <ul>
+        <li>Code generation
+    </ul>
+    <h4>Language interfaces</h4>
+    <ul>
+        <li>Python
+        <li>Tcl
+        <li>Perl
+        <li>Guile (Scheme/Lisp)
+        <li>Java
+        <li>Ruby
+        <li>and a bunch of others <a target="_blank" href="http://www.swig.org/compat.html#SupportedLanguages">http://www.swig.org/compat.html#SupportedLanguages</a>
+    </ul>
+    <p>Further reading</p>
+    <ul>
+        <li><a target="_blank" href="http://www.swig.org/Doc1.3/Python.html">http://www.swig.org/Doc1.3/Python.html</a>
+    </ul>
+</section>
+
+<section class="slide">
+	<h2>SWIGifying add()</h2>
+    <ul>
+        <li>build add.i
+        <li>create distutils setup.py
+    </ul>
+<h4>run it!</h4>
+<pre><code>python -c 'import add;print add.add(4,5)'</code></pre>
+</section>
+
+
+<section class="slide">
+	<h2>SWIGifying add(), not just for Python</h2>
+    <p>SWIG will create interfaces for all supported languages</p>
+    <ul>
+        <li>create extconf.rb
+        <li><code>ruby extconf.rb</code>
+        <li><code>make</code>
+        <li><code>ruby -e 'require "add"; print add(5,6).to_s + "\n"'</code>
+    </ul>
+</section>
+
+<section class="slide">
+	<h2>Cython</h2>
+    <p>A Python like language with static types which compiles down to Python extensions written in C</p>
+    <ul>
+        <li>
+    </ul>
+    <p>Further reading</p>
+    <ul>
+        <li><a target="_blank" href="http://www.cython.org/">http://www.cython.org/</a>
+        <li><a target="_blank" href="http://docs.cython.org/">http://docs.cython.org/</a>
+    </ul>
+
+</section>
+
+<section class="slide">
+	<h2>ctypes</h2>
+    <p>A foreign language interface in Python</p>
+    <h3>Benefits</h3>
+    <ul>
+        <li>Ships with Python, since 2.5
+        <li>No new language to learn, it's all Python
+    </ul>
+    <p>Further reading</p>
+    <ul>
+        <li><a target="_blank" href="http://docs.python.org/2/library/ctypes.html">http://docs.python.org/2/library/ctypes.html</a>
+    </ul>
+</section>
+
+
+<section class="slide">
+	<h2></h2>
+    <ul>
+        <li>
     </ul>
 </section>
 
@@ -75,18 +267,14 @@
         <li>
     </ul>
 </section>
+
 <section class="slide">
 	<h2></h2>
     <ul>
         <li>
     </ul>
 </section>
-<section class="slide">
-	<h2></h2>
-    <ul>
-        <li>
-    </ul>
-</section>
+
 
 <!--
 <section class="slide">
