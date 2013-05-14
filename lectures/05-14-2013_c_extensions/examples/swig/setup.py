@@ -15,5 +15,3 @@ setup(
         Extension('_add', sources=['add.c', 'add.i'])
     ]
 )
-# swig_opts=['-modern', '-I../include'])],
-# python setup.py build_ext --swig-opts="-modern -I../include"`

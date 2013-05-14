@@ -51,13 +51,12 @@
 	<h3>Today's topics</h3>
     <ul>
         <li>Motivation and options</li>
-        <li>extending versus embedding
-        <li>extension modules (C API)</li>
+        <li>Python packaging tools</li>
+        <li>Extension modules (C API)</li>
         <li>SWIG</li>
-        <li>SIP</li>
         <li>ctypes</li>
         <li>cython</li>
-        <li>shedskin (https://code.google.com/p/shedskin/)</li>
+        <li>others..</li>
         <li>your projects</li>
     </ul>
 
@@ -68,6 +67,7 @@
     <ul>
         <li>Performance
         <li>Integration with existing C libraries
+        <li>Working as a glue language
         <li>Implement new builtin types
     </ul>
 
@@ -80,7 +80,7 @@
 <section class="slide">
 	<h2>Packaging your code</h2>
     <p>Before we start building extensions, a quick look at building and packaging Python modules
-    <p>We'll package our add() function into a distributable model
+    <p>We'll wrap up our add() function into a distributable package
 <pre><code>
 def add(x, y):
     return x+y
@@ -90,7 +90,7 @@ def add(x, y):
 <section class="slide">
 	<h2>Packaging with Distutils</h2>
     <ul>
-        <li>write a setup.py script, e.g.
+        <li>write a setup.py script
 <pre><code>
 from distutils.core import setup, Extension
 
@@ -108,12 +108,20 @@ setup(
 <li><code>% python setup.py sdist</code>
 </ul>
     <p>Now your package is nicely wrapped up in build/, ready to distribute</p>
-    <p>Distutils isn't the only package for packaging, there is also setuptools and distribute</p>
-    <p>Further reading</p>
+</section>
+
+<section class="slide">
+    <h2>and of course, there other options</h2>
+    <p>Distutils isn't the only package for packaging, there is also setuptools, distribute, and distutils2</p>
     <ul>
         <li><a target="_blank" href="http://docs.python.org/2/distutils/introduction.html">http://docs.python.org/2/distutils/introduction.html</a>
         <li><a target="_blank" href="http://peak.telecommunity.com/DevCenter/setuptools">http://peak.telecommunity.com/DevCenter/setuptools</a>
         <li><a target="_blank" href="https://pypi.python.org/pypi/distribute">https://pypi.python.org/pypi/distribute</a>
+    </ul>
+    <p>distutils is the standard, works well until you need it to get complicated
+    <h3>Further reading</h3>
+    <ul>
+    <li><a target="_blank" href="http://stackoverflow.com/a/6522905/958118">http://stackoverflow.com/a/6522905/958118</a>
     </ul>
 </section>
 
@@ -185,7 +193,7 @@ int main(void) {
     <p>A language agnostic tool for integrating C/C++ code with high level languages</p>
     <p>Advantages
     <ul>
-        <li>Code generation
+        <li>Code generation for other environments than Python.   Doesn't require modification to your C source.
     </ul>
     <h4>Language interfaces</h4>
     <ul>
@@ -208,6 +216,7 @@ int main(void) {
     <ul>
         <li>build add.i
         <li>create distutils setup.py
+        <li>python setup.py build_ext -i
     </ul>
 <h4>run it!</h4>
 <pre><code>python -c 'import add;print add.add(4,5)'</code></pre>
@@ -220,8 +229,9 @@ int main(void) {
     <ul>
         <li>create extconf.rb
         <li><code>ruby extconf.rb</code>
+        <li><code>swig -ruby add.i</code>
         <li><code>make</code>
-        <li><code>ruby -e 'require "add"; print add(5,6).to_s + "\n"'</code>
+        <li><code>ruby -e 'require "add"; print Add.add(5,6).to_s + "\n"'</code>
     </ul>
     <p>Further reading</p>
     <ul>
@@ -293,31 +303,74 @@ def integrate_f(a, b, N):
 </pre>
 </section>
 
+<section class="slide">
+    <h2>Improvements with static typing</h2>
+    <ul>
+        <li>Convert the dynamically typed variables to static types and measure performance improvement before and after 
+        <li>Can static types and dynamic types be mixed?
+        <li>Check the performance in converting the function type to static (<a target="_blank" href="http://docs.cython.org/src/quickstart/cythonize.html#typing-functions">see here</a>)
+        <li>Use cython -a to compare the generated C code in all cases
+    </ul>
+<pre>
+<code>
+def f(x):
+    return x**2-x
+
+def integrate_f(a, b, N):
+    s = 0
+    dx = (b-a)/N
+    for i in range(N):
+        s += f(a+i*dx)
+    return s * dx
+
+
+</code>
+</pre>
+
+</section>
+
+<section class="slide">
+	<h2>Even more ways to integrate to C</h2>
+    <p>There are several other ways to integrate with C.   We say a passing hello to them.
+</section>
+
+<section class="slide">
+    <h2>Pyrex</h2>
+    <p><a target="_blank" href="http://wiki.python.org/moin/Pyrex">http://wiki.python.org/moin/Pyrex</a></p>
+    <p>Superceded by Cython</p>
+</section>
+
+<section class="slide">
+	<h2>SIP</h2>
+    <ul>
+        <li>Takes a specification file and generates the necessary C++ and Python modules
+        <li>Used to support large libraries like PyQT
+    </ul>
+    <p><a target="_blank" href="http://wiki.python.org/moin/SIP">http://wiki.python.org/moin/SIP</a>
+    <ul>
+        <li>
+    </ul>
+</section>
+
 
 <section class="slide">
 	<h2>Boost.Python</h2>
+    <p><a target="_blank" href="http://www.boost.org/doc/libs/1_41_0/libs/python/doc/index.html">http://www.boost.org/doc/libs/1_41_0/libs/python/doc/index.html</a></p>
     <p>A C++ library which interfaces Python and C++</p>
-    <p>We're not going over this today, but it's an option for C++ integration</p>
-    <ul>
-        <li>
-        <a target="_blank" href="http://www.boost.org/doc/libs/1_41_0/libs/python/doc/index.html">http://www.boost.org/doc/libs/1_41_0/libs/python/doc/index.html</a>
-    </ul>
+    <p>Wraps C++ functions in BOOST wrappers, compiled with your regular C++ compiler</p>
 </section>
 
 <section class="slide">
-	<h2></h2>
-    <ul>
-        <li>
-    </ul>
+    <h2>shedskin</h2>
+    <p><a target="_blank" href="https://code.google.com/p/shedskin/">https://code.google.com/p/shedskin/</a></p>
+    <p>A pure python compiler that makes type assumptions based on type inference</p>
+    <p>Experimental, but growing</p>
 </section>
 
 <section class="slide">
-	<h2></h2>
-    <ul>
-        <li>
-    </ul>
+    <h2>A few others</h2>
+    <p><a target="_blank" href="http://wiki.python.org/moin/IntegratingPythonWithOtherLanguages">http://wiki.python.org/moin/IntegratingPythonWithOtherLanguages</a></p>
 </section>
-
 
 <!--
 <section class="slide">

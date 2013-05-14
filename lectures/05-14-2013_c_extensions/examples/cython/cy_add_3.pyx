@@ -1,9 +1,9 @@
 """
-Cython implimentation of the add.c example
+Cython implementation of the add.c example
 
 This one calls an actual C function to do the work
 
-creates a cython funcion to call the C function.
+creates a cython function to call the C function.
 
 """
 
