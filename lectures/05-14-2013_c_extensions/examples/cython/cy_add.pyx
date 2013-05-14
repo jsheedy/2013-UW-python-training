@@ -1,5 +1,5 @@
 """
-Cython implimentation of the add.c example
+Cython implementation of the add.c example
 """
 
 def add(int x, int y):

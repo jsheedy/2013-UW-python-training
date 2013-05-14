@@ -24,7 +24,7 @@ generating "annotated" C code (HTML):
 
 $ cython -a cy_add.pyx
 
-Look at the htmk -- the yellow highlights are places where calls into the Python runtime are used.
+Look at the html -- the yellow highlights are places where calls into the Python runtime are used.
 
 ## To build extension:
 

@@ -1,5 +1,5 @@
 """
-Cython implimentation of the add.c example
+Cython implementation of the add.c example
 
 This one re-writes the function as a cdef function, then
 calls that from a def function
