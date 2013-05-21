@@ -60,10 +60,12 @@
 
 <section class="slide">
     <h2>argparse</h2>
-    <p>A module for handling command line arguments</p>
-    <p>Command line arguments are accessible via sys.argv
-    <p>Manually parsing sys.argv gets hairy with optional parameters
+    <p>A module for handling command line arguments like</p>
+    <p><code>% command.py arg1 --x 9 --y 10 </code></p>
+    <p>Command line arguments are accessible directly via sys.argv
+    <p>Manually parsing sys.argv gets difficult with optional parameters
     <p>argparse is easy for simple cases, and possible for complex ones
+    <p>Features:</p>
     <ul>
         <li>position independent optional arguments
         <li>type and range validation
@@ -85,9 +87,9 @@ print args.x
 <code>
 import argparse
 
-parser = argparse.ArgumentParser(description="add app")
-parser.add_argument('x', type=int, help="x value")
-parser.add_argument('y', type=int, help="y value")
+parser = argparse.ArgumentParser(description='add app')
+parser.add_argument('x', type=int, help='x value')
+parser.add_argument('y', type=int, help='y value')
 
 args = parser.parse_args()
 
@@ -103,7 +105,7 @@ print args.x + args.y
 <p><pre><code>
 import argparse
 
-parser = argparse.ArgumentParser(description="add app")
+parser = argparse.ArgumentParser(description='add app')
 subparsers = parser.add_subparsers(help='sub command')
 
 null_parser = subparsers.add_parser('null', help='null')
@@ -158,6 +160,11 @@ print args.func(*(args.x))
 </pre>
 </section>
 
+<section class="slide">
+    <h2>End of argparse overview</h2>
+    <p>This should cover most of your argument processing needs.  For more detailed usage:</p>
+    <a target="_blank" href="http://docs.python.org/2.7/library/argparse.html">http://docs.python.org/2.7/library/argparse.html</a>
+</section>
 
 <section class="slide">
 	<h2>Motivations for parallel execution</h2>
@@ -169,29 +176,41 @@ print args.func(*(args.x))
 </section>
 
 <section class="slide">
-	<h2>parallelization strategy</h2>
+	<h2>Parallelization strategy</h2>
     <ol>
-        <li>Break down problem into chunks
+        <li>Break problem down into chunks
         <li>Execute chunks in parallel
         <li>Reassemble output of chunks into result
     </ol>
     <img width="500" src="../images/OPP.0108.gif" />
 </section>
 
+<section class="slide">
+	<h2>Parallelization strategy</h2>
+    <p>
+        <ul>
+            <li>Not every problem is parallelizable
+            <li>There is an optimal number of threads for each problem in each environment, so make it tunable.
+            <li>Working concurrently opens up a Pandora's box of synchronization issues
+            <li>To help with those, we have locks, queue
+        </ul>
+    </p>
+</section>
 
 <section class="slide">
     <h2>Threads versus processes in Python</h2>
     <h3>Processes</h3>
-    <p>processes are independent environments managed by the OS.  Communication between processes via IPC.</p>
+    <p>processes are independent environments managed by the OS
+    <p>Communication between processes via multiprocessing.Queue, multiprocessing.Pipe, and regular IPC</p>
     <p>processes require multiple copies of the data, or expensive IPC to access it</p>
 
     <h3>Threads</h3>
-    <p>threads are lightweight processes, which share the address space of the parent process.  This allows
+    <p>Threads are lightweight processes
+    <p>Threads share the address space of the parent process.  This allows
     access to data in the same scope</p>
-    <p> Python threads are true OS level threads</p>
-    <p>Shared access to data</p>
-    <p>Threads can not take advantage of multiple processors due to the GIL</p>
-    <p>But the GIL is released during IO</p>
+    <p>Python threads are true OS level threads</p>
+    <p>Threads can not gain the performance advantage of multiple processors due to the GIL</p>
+    <p>But the GIL is released during IO, allowing IO bound processes to benefit from threading</p>
 
 </section>
 
@@ -211,10 +230,8 @@ print args.func(*(args.x))
 
 <section class="slide">
     <h2>posted without comment</h2>
-    <img src="../images/killGIL.jpg" />
+    <img width="500" src="../images/killGIL.jpg" />
 </section>
-
-
 
 <section class="slide">
     <h2>A real CPU bound problem</h2>
@@ -414,16 +431,10 @@ proc.start()
 <section class="slide">
 	<h2>Other options</h2>
     <p>Traditionally, concurency has been achieved through multiple process communication and in-process threads, as we've seen</p>
-    <p>Another strategy is through micro-threads, implemented via coroutines 
-    <p>A coroutine is a generalazation of a subroutine which allows multiple entry points for suspending and resuming execution
-<pre>
-<code>
-</code>
-</pre>
+    <p>Another strategy is through micro-threads, implemented via coroutines and a scheduler
+    <p>A coroutine is a generalization of a subroutine which allows multiple entry points for suspending and resuming execution
     <ul>
         <li><a href="http://dabeaz.com/coroutines/">http://dabeaz.com/coroutines/, A Curious Course on Coroutines and Concurrency</a>
-        <li><a href="http://eventlet.net/">http://eventlet.net/</a>
-        <li><a href="http://www.gevent.org">http://www.gevent.org</a>
         <li><a href="http://en.wikipedia.org/wiki/Coroutine">http://en.wikipedia.org/wiki/Coroutine</a>
     </ul>
 
@@ -481,7 +492,7 @@ for x in fiberator(20):
 </section>
 
 <section class="slide">
-	<h2>With send(), a generator is a coroutine</h2>
+	<h2>With send(), a generator becomes a coroutine</h2>
 
 <p><pre><code>
 def coroutine(n):
@@ -510,17 +521,20 @@ for i in range(5):
 </p>
 </section>
 
-<!--
 <section class="slide">
-	<h2></h2>
+	<h2>Packages using coroutines for micro threads</h2>
+    <p>By "jumping" to parallel coroutines, our application can simulate true threads.   Creating the scheduler 
+    which does the jumping is beyond the scope of this class, but look into these packages which handle the dirty
+    work</p>
     <ul>
-        <li>
+        <li><a href="http://eventlet.net/">http://eventlet.net/</a>
+        <li><a href="https://pypi.python.org/pypi/greenlet">https://pypi.python.org/pypi/greenlet</a>
+        <li><a href="http://www.gevent.org">http://www.gevent.org</a>
     </ul>
 
 <p><pre><code>
 </code></pre></p>
 </section>
--->
 
 
 <!--

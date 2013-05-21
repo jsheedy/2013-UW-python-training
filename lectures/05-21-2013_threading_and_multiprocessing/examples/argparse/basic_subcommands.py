@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+
 import argparse
 parser = argparse.ArgumentParser(description='killer app')
+parser.add_argument('--verbose', '-v', action='store_true', help="verbose")
 subparsers = parser.add_subparsers(help='sub command')
 
 null_parser = subparsers.add_parser('null', help='null')
