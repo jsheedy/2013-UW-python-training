@@ -66,7 +66,6 @@
     <a target="_blank" href="http://c2.com/cgi/wiki?PrematureOptimization">http://c2.com/cgi/wiki?PrematureOptimization</a>
     <a target="_blank" href="http://c2.com/cgi/wiki?ProfileBeforeOptimizing">http://c2.com/cgi/wiki?ProfileBeforeOptimizing</a>
 </section>
-
 <section class="slide">
     <h2>An optimization strategy</h2>
     <p>
@@ -186,8 +185,7 @@ $ python -m timeit -n 1000 -t "len([x**2 for x in range(1000)])"
 </section>
 
 <section class="slide">
-    <h2>cProfile</h2>
-
+    <h2>cProfiler</h2>
 <pre>
 <code>
 python -m cProfile -o profile_dump program_to_profile.py
@@ -201,6 +199,7 @@ python -m cProfile -o profile_dump program_to_profile.py
  11111110    2.879    0.000    2.879    0.000   integrate.py:1(f)
  [....]
 </pre>
+</code>
 <ul>
     <li>ncalls: number of calls
     <li>tottime: total time spent in function, excluding time in sub-functions
@@ -298,10 +297,23 @@ pyprof2calltree -i dump.profile -o dump.callgrind
         inlining code or caching function references might help
         <li>Python string handling idioms: use "".join(list_of_strings) rather than sequential calls to +=
         <li>using list comprehensions, generator expressions, or map() instead of for loops can be faster
-
+        <li>Rewrite expensive code in C (or Cython!)
+        <li>Leverage existing C extension libraries, for instance Numpy.
     </ul>
 
 </section>
+
+<section class="slide">
+<blockquote>
+<p>
+“Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.”
+</p>
+<p>
+    <i>- Brian Kernighan</i>
+</p>
+</blockquote>
+</section>
+
 
 <!--
 <section class="slide">

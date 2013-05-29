@@ -2,7 +2,7 @@ import time
 
 x = 0
 
-# @profile
+@profile
 def slow():
     x = 0
     def doit1(i):
@@ -13,7 +13,7 @@ def slow():
     for i in list:
         doit1(i)
 
-# @profile
+@profile
 def fast():
     x = 0
     def doit2(list):

@@ -13,8 +13,8 @@ class Sphere(object):
         self.ball = pygame.image.load("ball.gif")
         self.x = random.random() * width
         self.y = random.random() * height
-        vx = 100*(random.random() - .5)
-        vy = 100*(random.random() - .5)
+        vx = 150*(random.random() - .5)
+        vy = 150*(random.random() - .5)
         self.v = [vx, vy]
 
     def update_v(self, other ):
